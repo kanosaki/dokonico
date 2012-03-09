@@ -1,0 +1,3 @@
+
+class RemoteManager:
+    pass

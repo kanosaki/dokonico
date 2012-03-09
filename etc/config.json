@@ -1,0 +1,19 @@
+{
+    "sync_system" : {
+        "mode" : "dropbox | custom | google"
+    },
+    "google" : {
+        "token" : "",
+        "secret" : ""
+    },
+    "custom_server" : {
+        "host" : "example.com",
+        "port" : 1234
+    },
+    "dropbox" : {
+        "dir" : "~/Dropbox/Documents/dokonico"
+    }
+}
+
+
+

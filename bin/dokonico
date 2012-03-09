@@ -1,0 +1,5 @@
+#!/bin/sh
+BIN_DIR=$(dirname $0)
+PY_SCRIPT=${BIN_DIR}/dokonico.py
+
+python3 ${PY_SCRIPT}

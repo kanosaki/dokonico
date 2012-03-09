@@ -1,0 +1,43 @@
+{ "common_names" : {
+        "creation_utc" : "int",
+        "host_key" : "str",
+        "name" : "str",
+        "value" : "str",
+        "path" : "str",
+        "expires_utc" : "int",
+        "is_secure" : "int",
+        "last_access_utc" : "int"
+    },
+    "chrome" : { 
+        "table_name" : "cookies",
+        "columns" : [ 
+            ["creation_utc"    , "creation_utc"    ], 
+            ["host_key"        , "host_key"        ], 
+            ["name"            , "name"            ], 
+            ["value"           , "value"           ], 
+            ["path"            , "path"            ], 
+            ["expires_utc"     , "expires_utc"     ], 
+            ["secure"          , "is_secure"       ], 
+            ["httponly"        , "is_http_only"    ], 
+            ["last_access_utc" , "last_access_utc" ], 
+            ["has_expires"     , "has_expires"     ], 
+            ["persistent"      , "persistent"      ]
+        ]
+    },
+    "firefox" : {
+        "table_name" : "moz_cookies",
+        "columns" : [
+            ["id"           , "id"           ], 
+            ["baseDomain"   , "base_domain"  ], 
+            ["name"         , "name"         ], 
+            ["value"        , "value"        ], 
+            ["host"         , "host_key"     ], 
+            ["path"         , "path"         ], 
+            ["expiry"       , "expires_utc"  ], 
+            ["lastAccessed" , "last_access"  ], 
+            ["creationTime" , "creation_utc" ], 
+            ["isSecure"     , "is_secure"    ], 
+            ["isHttpOnly"   , "is_http_only" ]
+        ]
+    }
+}
