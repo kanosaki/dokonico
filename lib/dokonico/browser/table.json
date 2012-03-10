@@ -1,4 +1,7 @@
-{ "common_names" : {
+{ 
+    "host_key" : ".nicovideo.jp",
+    "session_cookie" : "user_session",
+    "common_names" : {
         "creation_utc" : "int",
         "host_key" : "str",
         "name" : "str",

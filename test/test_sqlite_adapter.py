@@ -2,6 +2,11 @@
 import dokonico.browser.sqlite_adapter as sqa
 from nose.tools import *
 
+class TestSQLiteAdapter:
+    def test_lookup(self):
+        pass
+
+
 class TestNameTable:
     def test_convert_chrome(self):
         factory = sqa.NameTableFactory.default

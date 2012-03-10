@@ -3,6 +3,21 @@ import sqlite3
 import os
 import json
 
+def cached_property(f):
+    """returns a cached property that is calculated by function f"""
+    def get(self):
+        try:
+            return self._property_cache[f]
+        except AttributeError:
+            self._property_cache = {}
+            x = self._property_cache[f] = f(self)
+            return x
+        except KeyError:
+            x = self._property_cache[f] = f(self)
+            return x
+        
+    return property(get)
+
 class SQLiteAdapter:
     def __init__(self, file_path, browser_name):
         self.path = file_path
@@ -14,14 +29,28 @@ class SQLiteAdapter:
     def close(self):
         self.connection.close()
 
-    def query(self, pred):
-        pass
+    def _execute_sql(self, sql):
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
+        for row in cursor:
+            return row
+
+    def query(self):
+        sql = self.name_table.select_query
+        return map(self.name_table.create_dict,
+                self._execute_sql(sql))
+
+    @cached_property
+    def name_table(self):
+        factory = NameTableFactory.default
+        factory.create(self.browser_name)
 
     def __enter__(self):
         self.connect()
 
     def __exit__(self):
         self.close()
+
 
 class NameTableFactory:
     def __init__(self):
@@ -66,6 +95,10 @@ class NameTable:
     def column_headers(self):
         return [ c[0] for c in self._cols ]
 
+    @property
+    def common_names(self):
+        return [ c[1] for c in self._cols ]
+
     def special_name(self, name):
         """Converts common column name to browser specific column name."""
         return self._from_common_name(name)
@@ -75,11 +108,32 @@ class NameTable:
             if v == cname:
                 return k
         raise KeyError("Key [{0}] was not found.".format(cname))
+    
+    def create_dict(self, values):
+        return dict(zip(self.common_names, values))
 
     @property
     def _cols(self):
         return self.data["columns"]
-        
+    
+    @property
+    def target_table(self):
+        return self.data["table_name"]
+
+    @property
+    def where_pred(self):
+        return "{0} = {1} and {2} = {3}".format(
+                self.special_name("host_key"), self.whole["session_cookie"],
+                self.special_name("name"), self.whole["cookie_name"])
+    
+    @property
+    def select_query(self):
+        return """
+            SELECT {0} FROM {1} WHERE {2}
+        """.format(
+                ",".join(self.column_headers),
+                self.target_table,
+                self.where_pred)
 
 class _ChromeNameTable(NameTable):
     name = "chrome"
