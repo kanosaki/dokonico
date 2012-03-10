@@ -8,17 +8,17 @@ class SQLiteAdapter:
         self.path = file_path
         self.browser_name = browser_name
 
-    def open(self):
+    def connect(self):
         self.connection = sqlite3.connect(self.path)
 
     def close(self):
-        pass
+        self.connection.close()
 
     def query(self, pred):
         pass
 
     def __enter__(self):
-        self.open()
+        self.connect()
 
     def __exit__(self):
         self.close()
@@ -40,6 +40,9 @@ class NameTableFactory:
             return _FirefoxNameTable(self.data)
         else:
             raise ValueError("Unsupported browser!")
+
+# Default instance
+NameTableFactory.default = NameTableFactory()
         
 class NameTable:
     def initialize(self):
@@ -58,6 +61,10 @@ class NameTable:
             if k == name:
                 return i
             i += 1
+
+    @property
+    def column_headers(self):
+        return [ c[0] for c in self._cols ]
 
     def special_name(self, name):
         """Converts common column name to browser specific column name."""
