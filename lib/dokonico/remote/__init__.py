@@ -1,3 +1,7 @@
 
 class RemoteManager:
-    pass
+    def pull(self):
+        pass
+
+    def push(self):
+        pass

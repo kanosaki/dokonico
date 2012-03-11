@@ -1,9 +1,17 @@
 
 
-class Chrome:
-    pass
+import dokonico.core
+import dokonico.browser.common
 
-class ChromeFactory:
+class Chrome(dokonico.browser.common.Browser):
+    name = "chrome"
+    def query_session(self):
+        with self.adapter as a:
+            sessions = a.query()
+            return [ ChromeCookie(s) for s in sessions ]
+
+
+class ChromeFactory(dokonico.browser.common.BrowserFactory):
     def windows(self):
         return ChromeWin()
 
@@ -15,8 +23,12 @@ class ChromeWin(Chrome):
     def cookie_db_file(self):
         return """C:\<<UserName>>\Local\Google\Chrome\Default\User Data\Cookies"""
 
-
 class ChromeMac(Chrome):
     @property
     def cookie_db_file(self):
         return """/Users/<<UserName>>/Library/Application Support/Google/Chrome/Default/Cookies"""
+
+class ChromeCookie(dokonico.core.Cookie):
+    def __init__(self, dic):
+        self.dic = dic
+        

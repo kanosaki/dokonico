@@ -44,5 +44,15 @@ class Cookie:
             return self.dic[key]
         else:
             raise AttributeError()
+
+    def is_newer_than(self, cookie):
+        this_created = self.time_comparator
+        that_created = cookie.time_comparator
+        return this_created > that_created
+
+    @property
+    def time_comparator(self):
+        return int(self.creation_utc)
         
+
 
