@@ -40,10 +40,10 @@ class Cookie:
         self.dic = dic
 
     def __getstate__(self):
-        return self.dic.copy()
+        return self.__dict__.copy()
 
     def __setstate__(self, state):
-        self.dic = state
+        self.__dict__.update(state)
 
     def __getattr__(self, key):
         if key in self.dic:
