@@ -15,7 +15,6 @@ def cached_property(f):
         except KeyError:
             x = self._property_cache[f] = f(self)
             return x
-        
     return property(get)
 
 class SQLiteAdapter:
@@ -32,23 +31,23 @@ class SQLiteAdapter:
     def _execute_sql(self, sql):
         cursor = self.connection.cursor()
         cursor.execute(sql)
-        for row in cursor:
-            return row
+        return cursor.fetchall()
 
     def query(self):
         sql = self.name_table.select_query
-        return map(self.name_table.create_dict,
-                self._execute_sql(sql))
+        return list(map(self.name_table.create_dict,
+                self._execute_sql(sql)))
 
     @cached_property
     def name_table(self):
         factory = NameTableFactory.default
-        factory.create(self.browser_name)
+        return factory.create(self.browser_name)
 
     def __enter__(self):
         self.connect()
+        return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         self.close()
 
 
@@ -122,9 +121,9 @@ class NameTable:
 
     @property
     def where_pred(self):
-        return "{0} = {1} and {2} = {3}".format(
-                self.special_name("host_key"), self.whole["session_cookie"],
-                self.special_name("name"), self.whole["cookie_name"])
+        return "{0} = '{1}' and {2} = '{3}'".format(
+                self.special_name("host_key"), self.whole["host_key"],
+                self.special_name("name"), self.whole["session_cookie"])
     
     @property
     def select_query(self):

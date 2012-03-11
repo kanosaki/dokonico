@@ -1,11 +1,34 @@
 
-import dokonico.browser.sqlite_adapter as sqa
+import os
+import warnings
+
 from nose.tools import *
 
-class TestSQLiteAdapter:
-    def test_lookup(self):
-        pass
+import dokonico.browser.sqlite_adapter as sqa
 
+THIS_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
+
+class TestSQLiteAdapter:
+    def sample_db(self):
+        return os.path.join(THIS_DIR_PATH, "./private/cookies.sqlite")
+
+    def test_lookup(self):
+        db_file = self.sample_db()
+        if os.path.exists(db_file):
+            self.exec_lookup(db_file)
+        else:
+            warnings.warn("Sample database not found, skipping.")
+
+
+    def exec_lookup(self, path):
+        ret = None
+        with sqa.SQLiteAdapter(path, "firefox") as a:
+            ret = a.query()
+        assert_equals(len(ret), 1)
+        row = ret[0]
+        assert_equals(row['host_key'], '.nicovideo.jp')
+        assert_equals(row['name'], 'user_session')
+        assert_equals(row['path'], '/')
 
 class TestNameTable:
     def test_convert_chrome(self):
