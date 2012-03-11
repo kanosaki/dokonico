@@ -1,5 +1,5 @@
 
-import dokonico.browser.sqlite_adapter as sqlite_adapter
+import dokonico.browser.sqlite_adapter
 
 class Browser:
     def __init__(self):
@@ -11,7 +11,7 @@ class Browser:
             return self._adapter
         except AttributeError:
             path = self.cookie_db_file
-            self._adapter = sqlite_adapter.SQLiteaAdapter(path, self.name)
+            self._adapter = dokonico.browser.sqlite_adapter.SQLiteAdapter(path, self.name)
             return self._adapter
 
     def session(self):
@@ -23,10 +23,10 @@ class Browser:
 
 
 class BrowserFactory:
-    def create(self, name):
-        if name == "windows":
+    def create(self, env):
+        if env.name == "Windows":
             return self.windows()
-        elif name == "mac":
+        elif env.name == "Wac":
             return self.mac()
         else:
             raise Exception("Sorry, OS '{0}' is not supported.".format(name))

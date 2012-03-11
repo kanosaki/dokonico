@@ -41,7 +41,7 @@ class _WindowsEnvHelper(EnvHelper):
 
     @property
     def homedir(self):
-        return """C:\Users\{0}""".format(self.username)
+        return """C:\\Users\\{0}""".format(self.username)
 
 class _MacEnvHelper(EnvHelper):
     name = "Mac"

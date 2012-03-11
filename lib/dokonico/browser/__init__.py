@@ -1,8 +1,4 @@
 
-
-import dokonico.browser.chrome as chrome
-import dokonico.browser.firefox as firefox
-
 class BrowserManager:
     def __init__(self):
         pass
@@ -29,5 +25,7 @@ class BrowserManager:
             return self._browsers
 
     def _enumerate_browsers(self):
+        from dokonico.browser import chrome
+        from dokonico.browser import firefox
         yield chrome.Chrome()
         yield firefox.Firefox()
