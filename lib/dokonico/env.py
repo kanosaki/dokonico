@@ -32,7 +32,6 @@ class EnvHelper:
     def username(self):
         return os.getlogin()
 
-
 class _WindowsEnvHelper(EnvHelper):
     name = "Windows"
     @property
@@ -41,27 +40,25 @@ class _WindowsEnvHelper(EnvHelper):
 
     @property
     def homedir(self):
-        return """C:\\Users\\{0}""".format(self.username)
+        return os.environ['USERPROFILE']
 
-class _MacEnvHelper(EnvHelper):
+class _UnixEnvHelper(EnvHelper):
+    name = "Unix"
+    @property
+    def homedir(self):
+        return os.environ['HOME']
+
+class _MacEnvHelper(_UnixEnvHelper):
     name = "Mac"
     @property
     def is_mac(self):
         return True
 
-    @property
-    def homedir(self):
-        return "/Users/{0}".format(self.username)
-
-class _LinuxEnvHelper(EnvHelper):
+class _LinuxEnvHelper(_UnixEnvHelper):
     name = "Linux"
     @property
     def is_linux(self):
         return True
-
-    @property
-    def homedir(self):
-        return "/home/{0}".format(self.username)
 
 class UnsupportedOSError(Exception):
     pass

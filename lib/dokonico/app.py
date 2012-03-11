@@ -12,7 +12,8 @@ class App:
         try:
             return self._browser_manager
         except AttributeError:
-            self._browser_manager = dokonico.browser.BrowserManager()
+            self._browser_manager = dokonico.browser.BrowserManager(
+                    self.env, self.conf)
             return self._browser_manager
 
     @property
@@ -20,7 +21,8 @@ class App:
         try:
             return self._remote_manager
         except AttributeError:
-            self._remote_manager = dokonico.remote.RemoteManager()
+            self._remote_manager = dokonico.remote.RemoteManager(
+                    self.env, self.conf)
             return self._remote_manager
 
     def _local_latest(self):

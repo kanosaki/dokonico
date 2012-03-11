@@ -39,6 +39,12 @@ class Cookie:
     def __init__(self, dic):
         self.dic = dic
 
+    def __getstate__(self):
+        return self.dic.copy()
+
+    def __setstate__(self, state):
+        self.dic = state
+
     def __getattr__(self, key):
         if key in self.dic:
             return self.dic[key]
