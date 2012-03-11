@@ -31,7 +31,6 @@ class EnvHelper:
     @property
     def username(self):
         return os.getlogin()
-    
 
 
 class _WindowsEnvHelper(EnvHelper):
