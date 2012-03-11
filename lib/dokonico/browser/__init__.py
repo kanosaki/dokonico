@@ -1,7 +1,8 @@
 
 class BrowserManager:
-    def __init__(self):
-        pass
+    def __init__(self, env, conf):
+        self.env = env
+        self.conf = conf
 
     def latest(self):
         sessions_raw = map(lambda b : b.session, self.browsers)
@@ -21,11 +22,12 @@ class BrowserManager:
         try:
             return self._browsers
         except AttributeError:
-            self._browsers = list(self._enumerate_browsers())
+            self._browsers = [ f.create(self.env) for f in self.factories() ]
             return self._browsers
 
-    def _enumerate_browsers(self):
+    def factories(self):
         from dokonico.browser import chrome
         from dokonico.browser import firefox
-        yield chrome.Chrome()
-        yield firefox.Firefox()
+        yield chrome.ChromeFactory()
+        yield firefox.FirefoxFactory()
+
