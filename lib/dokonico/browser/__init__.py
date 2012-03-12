@@ -22,12 +22,12 @@ class BrowserManager:
         try:
             return self._browsers
         except AttributeError:
-            self._browsers = [ f.create(self.env) for f in self.factories() ]
+            self._browsers = [ f.create() for f in self.factories() ]
             return self._browsers
 
     def factories(self):
         from dokonico.browser import chrome
         from dokonico.browser import firefox
-        yield chrome.ChromeFactory()
-        yield firefox.FirefoxFactory()
+        yield chrome.ChromeFactory(self.env)
+        yield firefox.FirefoxFactory(self.env)
 
