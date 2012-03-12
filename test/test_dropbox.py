@@ -52,5 +52,6 @@ class TestDropbox:
         d.push(src)
         ret = d.pull()
         assert_equals(src.value, ret.value)
+        assert_equals(src.browser_name, ret.browser_name)
 
         
