@@ -42,6 +42,10 @@ class _WindowsEnvHelper(EnvHelper):
     def homedir(self):
         return os.environ['USERPROFILE']
 
+    @property
+    def app_data(self):
+        return os.environ['APPDATA']
+
 class _UnixEnvHelper(EnvHelper):
     name = "Unix"
     @property

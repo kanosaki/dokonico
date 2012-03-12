@@ -1,6 +1,10 @@
 
 import dokonico.browser.sqlite_adapter
 
+
+class SessionNotFoundError(Exception):
+    pass
+
 class Browser:
     def __init__(self):
         raise Exception("dokonico.browser.common.Browser is Abstract class")
@@ -16,9 +20,9 @@ class Browser:
 
     def session(self):
         sessions = self.query_session()
-        if len(sessions) == 1:
+        try:
             return sessions[0]
-        else:
+        except (IndexError, SessionNotFoundError):
             return None
 
 
