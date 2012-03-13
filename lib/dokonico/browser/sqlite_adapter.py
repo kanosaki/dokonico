@@ -24,19 +24,22 @@ class SQLiteAdapter:
 
     def connect(self):
         self.connection = sqlite3.connect(self.path)
+        #self.connection.row_factory = sqlite3.Row
 
     def close(self):
         self.connection.close()
 
-    def _execute_sql(self, sql):
+    def execute_sql(self, sql):
         cursor = self.connection.cursor()
         cursor.execute(sql)
-        return cursor.fetchall()
+        ret = cursor.fetchall()
+        cursor.close()
+        return ret
 
     def query(self):
         sql = self.query_builder.select()
         return list(map(self.query_builder.create_dict,
-                self._execute_sql(sql)))
+                self.execute_sql(sql)))
 
     def update(self, dic):
         pass
@@ -134,6 +137,16 @@ class FirefoxQueryBuilder(QueryBuilder):
     def create_name_table(self):
         factory = NameTableFactory()
         return factory.create("Firefox")
+
+    def insert_tuple_expr(self, dic):
+        dic["id"] = str(self.next_id())
+        return ",".join(
+                [ self.value_expr(dic,h) for h in self.names.column_headers ])
+    
+    def next_id(self):
+        a = self.adapter
+        sql = "SELECT MAX(id) FROM moz_cookies;"
+        return a.execute_sql(sql)[0][0] + 1
 
 class NameTableFactory:
     def __init__(self):

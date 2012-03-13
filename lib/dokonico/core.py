@@ -1,4 +1,5 @@
 
+import datetime
 import json
 
 def config_item(loc):
@@ -57,8 +58,15 @@ class Cookie:
         return this_created > that_created
 
     @property
-    def time_comparator(self):
-        return int(self.creation_utc)
-        
+    def last_access_ticks(self):
+        return int(self.last_access_utc)
 
+    def __repr__(self):
+        return """Found! [Last accessed {}, Expires {}]""".format(
+                self._repr_utc_time(self.last_access_ticks),
+                self._repr_utc_time(self.expires_utc))
+
+    def _repr_utc_time(self, time):
+        t = datetime.datetime.utcfromtimestamp(time)
+        return t.strftime("%Y/%m/%d(%a) %H:%M:%S")
 

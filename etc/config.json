@@ -1,6 +1,6 @@
 {
     "sync_system" : {
-        "mode" : "dropbox | custom | google"
+        "mode" : "Dropbox"
     },
     "google" : {
         "token" : "",

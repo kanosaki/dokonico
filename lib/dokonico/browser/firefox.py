@@ -1,5 +1,6 @@
 
 import glob
+import os
 
 import dokonico.core
 from dokonico.browser import common
@@ -19,15 +20,15 @@ class Firefox(common.Browser):
         elif len(dirs) > 1:
             raise Exception("There are plural default profile directories in Firefox.")
         else:
-            return os.path.join(dirs[0], "cookies.sqlite")
+            return os.path.join(self.profiles_dir ,dirs[0], "cookies.sqlite")
         
 
 class FirefoxFactory(common.BrowserFactory):
     def windows(self):
-        return FirefoxWin()
+        return FirefoxWin(self.env)
 
     def mac(self):
-        return FirefoxMac()
+        return FirefoxMac(self.env)
 
 class FirefoxWin(Firefox):
     def __init__(self, env):
@@ -51,6 +52,10 @@ class FirefoxCookie(dokonico.core.Cookie):
         self.dic = dic
         
     @property
-    def time_comparator(self):
+    def last_access_ticks(self):
         return int(self.creation_utc) / 1000000
+
+    @property
+    def expire_ticks(self):
+        return int(self.expire_utc)
 

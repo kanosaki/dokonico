@@ -42,6 +42,12 @@ class ChromeCookie(dokonico.core.Cookie):
         self.dic = dic
 
     @property
-    def time_comparator(self):
+    def last_access_ticks(self):
         return int(self.creation_utc) / 10000000
+
+    @property
+    def expire_ticks(self):
+        return int(self.expire_utc) / 10000000
+
+        
         

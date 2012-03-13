@@ -22,6 +22,6 @@ class RemoteManager:
         mode = self.conf.sync_mode
         if mode == "Dropbox":
             from dokonico.remote import dropbox
-            return dropbox.Dropbox(env, conf)
+            return dropbox.Dropbox(self.env, self.conf)
         else:
             raise Exception("Unsupported sync_mode {0}".format(mode))

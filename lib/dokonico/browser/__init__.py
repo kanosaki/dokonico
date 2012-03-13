@@ -4,6 +4,10 @@ class BrowserManager:
         self.env = env
         self.conf = conf
 
+    def __iter__(self):
+        for b in self.browsers:
+            yield b
+
     def latest(self):
         sessions_raw = map(lambda b : b.session, self.browsers)
         sessions = list(filter(lambda s : s is not None, sessions_raw))

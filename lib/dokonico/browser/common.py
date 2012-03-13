@@ -33,9 +33,9 @@ class BrowserFactory:
     def create(self):
         if self.env.name == "Windows":
             return self.windows()
-        elif self.env.name == "Wac":
+        elif self.env.name == "Mac":
             return self.mac()
         else:
-            raise Exception("Sorry, OS '{0}' is not supported.".format(name))
+            raise Exception("Sorry, OS '{0}' is not supported.".format(self.env.name))
 
         

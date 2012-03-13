@@ -5,6 +5,7 @@ APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 
 import dokonico.env
 import dokonico.core
+import dokonico.app
 
 class AppLoader:
     def __init__(self, conf="etc/config.json"):
@@ -19,4 +20,4 @@ class AppLoader:
         return factory.create()
 
     def load(self):
-        return dokonico.core.App(self.config(), self.env())
+        return dokonico.app.App(self.config(), self.env())
