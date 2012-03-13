@@ -1,7 +1,7 @@
 { 
     "host_key" : ".nicovideo.jp",
     "session_cookie" : "user_session",
-    "common_names" : {
+    "types" : {
         "creation_utc" : "int",
         "host_key" : "str",
         "name" : "str",
@@ -9,9 +9,14 @@
         "path" : "str",
         "expires_utc" : "int",
         "is_secure" : "int",
-        "last_access_utc" : "int"
+        "is_http_only" : "int",
+        "last_access_utc" : "int",
+        "has_expires" : "int",
+        "persistent" : "int",
+        "id" : "int",
+        "base_domain" : "str"
     },
-    "chrome" : { 
+    "Chrome" : { 
         "table_name" : "cookies",
         "columns" : [ 
             ["creation_utc"    , "creation_utc"    ], 
@@ -27,20 +32,20 @@
             ["persistent"      , "persistent"      ]
         ]
     },
-    "firefox" : {
+    "Firefox" : {
         "table_name" : "moz_cookies",
         "columns" : [
-            ["id"           , "id"           ], 
-            ["baseDomain"   , "base_domain"  ], 
-            ["name"         , "name"         ], 
-            ["value"        , "value"        ], 
-            ["host"         , "host_key"     ], 
-            ["path"         , "path"         ], 
-            ["expiry"       , "expires_utc"  ], 
-            ["lastAccessed" , "last_access"  ], 
-            ["creationTime" , "creation_utc" ], 
-            ["isSecure"     , "is_secure"    ], 
-            ["isHttpOnly"   , "is_http_only" ]
+            ["id"           , "id"              ] ,
+            ["baseDomain"   , "base_domain"     ] ,
+            ["name"         , "name"            ] ,
+            ["value"        , "value"           ] ,
+            ["host"         , "host_key"        ] ,
+            ["path"         , "path"            ] ,
+            ["expiry"       , "expires_utc"     ] ,
+            ["lastAccessed" , "last_access_utc" ] ,
+            ["creationTime" , "creation_utc"    ] ,
+            ["isSecure"     , "is_secure"       ] ,
+            ["isHttpOnly"   , "is_http_only"    ] 
         ]
     }
 }

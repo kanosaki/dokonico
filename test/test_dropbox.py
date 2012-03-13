@@ -13,7 +13,7 @@ SAMPLE_DUMP = os.path.join(THIS_DIR_PATH, "private/dump.tmp")
 SAMPLE_DB = os.path.join(THIS_DIR_PATH, "private/cookies.sqlite")
 
 class DummyFirefox(firefox.Firefox):
-    name = "firefox"
+    name = "Firefox"
     def __init__(self):
         pass
     @property

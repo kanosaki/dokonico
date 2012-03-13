@@ -12,7 +12,7 @@ THIS_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 SAMPLE_DB = os.path.join(THIS_DIR_PATH, "private/cookies.sqlite")
 
 class DummyFirefox(ff.Firefox):
-    name = "firefox"
+    name = "Firefox"
     def __init__(self):
         pass
     @property

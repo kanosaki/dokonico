@@ -3,6 +3,7 @@ import os
 import warnings
 
 from nose.tools import *
+import nose.tools
 
 import dokonico.browser.sqlite_adapter as sqa
 
@@ -22,7 +23,7 @@ class TestSQLiteAdapter:
 
     def exec_lookup(self, path):
         ret = None
-        with sqa.SQLiteAdapter(path, "firefox") as a:
+        with sqa.SQLiteAdapter(path, "Firefox") as a:
             ret = a.query()
         assert_equals(len(ret), 1)
         row = ret[0]
@@ -30,10 +31,44 @@ class TestSQLiteAdapter:
         assert_equals(row['name'], 'user_session')
         assert_equals(row['path'], '/')
 
+qb_factory = sqa.QueryBuilderFactory(None)
+CHROME_SAMPLE_DIC = { 
+        "creation_utc" : "12345",
+        "host_key" : ".example.com",
+        "name" : "foobar",
+        "value" : "homuhomu",
+        "path" : "/",
+        "expires_utc" : "6789",
+        "is_secure" : "0",
+        "is_http_only" : "0",
+        "last_access_utc" : "123456",
+        "has_expires" : "1",
+        "persistent" : "1"}
+
+class TestQueryBuilder:
+    def test_select(self):
+        qb = qb_factory.create("Chrome")
+        sql = qb.select()
+        expected = "SELECT creation_utc,host_key,name,value,path,expires_utc,secure,httponly,last_access_utc,has_expires,persistent FROM cookies WHERE host_key = '.nicovideo.jp' and name = 'user_session';"
+        assert_equals(sql,expected)
+
+    def test_insert(self):
+        qb = qb_factory.create("Chrome")
+        sql = qb.insert(CHROME_SAMPLE_DIC)
+        expected = "INSERT INTO cookies VALUES(12345,'.example.com','foobar','homuhomu','/',6789,0,0,123456,1,1)"
+        assert_equals(sql, expected)
+
+    def test_update(self):
+        qb = qb_factory.create("Chrome")
+        sql = qb.update(CHROME_SAMPLE_DIC)
+        expected = "UPDATE cookies SET creation_utc=12345,host_key='.example.com',name='foobar',value='homuhomu',path='/',expires_utc=6789,secure=0,httponly=0,last_access_utc=123456,has_expires=1,persistent=1 WHERE host_key = '.nicovideo.jp' and name = 'user_session';"
+        assert_equals(sql, expected)
+        
+
+nt_factory = sqa.NameTableFactory.default
 class TestNameTable:
     def test_convert_chrome(self):
-        factory = sqa.NameTableFactory.default
-        chrome_table = factory.create("chrome")
+        chrome_table = nt_factory.create("Chrome")
 
         assert_equals(
             chrome_table.special_name("is_http_only"),
@@ -46,8 +81,7 @@ class TestNameTable:
         )
 
     def test_convert_firefox(self):
-        factory = sqa.NameTableFactory.default
-        firefox_table = factory.create("firefox")
+        firefox_table = nt_factory.create("Firefox")
 
         assert_equals(
             firefox_table.special_name("expires_utc"),
@@ -60,25 +94,40 @@ class TestNameTable:
 
     @raises(KeyError)
     def test_undefined_common_column_name(self):
-        factory = sqa.NameTableFactory.default
-        chrome_table = factory.create("chrome")
+        chrome_table = nt_factory.create("Chrome")
         chrome_table.common_name("foobar")
 
     @raises(ValueError)
     def test_factory_undefined_browser(self):
-        factory = sqa.NameTableFactory.default
-        factory.create("safari")
+        nt_factory.create("safari")
 
     def test_column_number(self):
-        factory = sqa.NameTableFactory.default
-        table = factory.create("chrome")
+        table = nt_factory.create("Chrome")
         assert_equals(
             table.column_number("creation_utc"), 0         
         )
 
+    def test_column_headers_chrome(self):
+        chrome = nt_factory.create("Chrome")
+        headers = chrome.column_headers
+        expected = ["creation_utc", 
+                "host_key", "name", 
+                "value", "path",
+                "expires_utc", "secure",
+                "httponly", "last_access_utc",
+                "has_expires", "persistent"]
+        assert_list_equal(headers, expected)
+        
+    def test_column_headers_firefox(self):
+        firefox = nt_factory.create("Firefox")
+        headers = firefox.column_headers
+        expected = [
+                "id", "baseDomain", "name",
+                "value", "host", "path", "expiry", 
+                "lastAccessed", "creationTime",
+                "isSecure", "isHttpOnly"]
+        assert_list_equal(headers, expected)
 
         
-
-
         
         
