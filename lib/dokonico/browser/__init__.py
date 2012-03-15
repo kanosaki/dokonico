@@ -9,12 +9,12 @@ class BrowserManager:
             yield b
 
     def latest(self):
-        sessions_raw = map(lambda b : b.session, self.browsers)
+        sessions_raw = map(lambda b : b.session(), self.browsers)
         sessions = list(filter(lambda s : s is not None, sessions_raw))
         if len(sessions) == 0:
             return None
         else:
-            sessions.sort(key = lambda s : s.time_comparator, reverse=True)
+            sessions.sort(reverse=True)
             return sessions[0]
 
     def push_all(self, cookie):

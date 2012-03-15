@@ -1,22 +1,14 @@
 
 
-DEFAULT_CONF_PATH = "etc/config.json"
 
-def start(options = {}):
-    conf_path = options.get("conf_path") or DEFAULT_CONF_PATH
-    show_sessions(conf_path)
+def start():
+    app = _init_app()
+    app.start()
 
-def _init_app(conf_path):
+def _init_app():
     from dokonico import loader
-    ldr = loader.AppLoader(conf_path)
+    ldr = loader.AppLoader()
     return ldr.load()
     
 
-def start_sync(conf_path):
-    app = _init_app(conf_path)
-    app.sync_latest()
-
-def show_sessions(conf_path):
-    app = _init_app(conf_path)
-    app.show_sessions()
     

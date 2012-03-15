@@ -16,6 +16,10 @@
         "id" : "int",
         "base_domain" : "str"
     },
+    "default_values" :{
+        "has_expires" : "1",
+        "persistent" : "1"
+    },
     "Chrome" : { 
         "table_name" : "cookies",
         "columns" : [ 

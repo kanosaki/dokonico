@@ -1,13 +1,15 @@
 
 import sys
+import logging as log
 
 import dokonico.browser
 import dokonico.remote
 
 class App:
-    def __init__(self, conf, env):
+    def __init__(self, conf, env, opts):
         self.conf = conf
         self.env = env
+        self.opts = opts
         
     @property
     def browsers(self):
@@ -27,6 +29,11 @@ class App:
                     self.env, self.conf)
             return self._remote_manager
 
+
+class Syncer(App):
+    def __init__(self, conf, env, opts):
+        App.__init__(self, conf, env, opts)
+
     def _local_latest(self):
         return self.browsers.latest()
 
@@ -35,32 +42,31 @@ class App:
 
     def _push_remote(self, cookie):
         self.remotes.push(cookie)
-
-    def show_sessions(self):
-        printer = SessionsPrinter(self, {})
-        printer.start()
-
-
-    def sync_latest(self):
+        
+    def start(self):
+        log.info("Syncing started.")
         local_latest = self._local_latest()
         remote_latest = self._pull_remote()
-        if local_latest.is_newer_than(remote_latest):
+        if remote_latest is None or local_latest.is_newer_than(remote_latest):
             self._push_remote(local_latest)
             self.browsers.push_all(local_latest)
         else:
             self.browsers.push_all(remote_latest)
 
 
-class SessionsPrinter:
-    def __init__(self, app, opts):
-        self.app = app
+class SessionsPrinter(App):
+    def __init__(self, conf, env, opts):
+        App.__init__(self, conf, env, opts)
         self._load_options(opts)
 
     def _load_options(self, opts):
-        self.out = opts.get("out") or sys.stdout
+        try:
+            self.out = opts.out
+        except AttributeError:
+            self.out = sys.stdout
 
-    def print(self, *args, indent=0):
-        print("    "* indent, *args, file=self.out)
+    def print(self, *args, indent=0, **kw):
+        print("    "* indent, *args, file=self.out, **kw)
         
     def start(self):
         print = self.print
@@ -70,14 +76,15 @@ class SessionsPrinter:
         self._show_remote()
 
     def _show_browsers(self):
-        for b in self.app.browsers:
+        for b in self.browsers:
             self.print(b.name + ":", indent=1)
             sess = b.session()
             self.print(repr(sess), indent=2)
 
     def _show_remote(self):
-        remote = self.app.remotes.current
-        self.print(remote.name + ":", indent=1)
+        remote = self.remotes.current
+        self.print(remote.name + ": ", indent=1, end="")
         sess = remote.pull()
+        print("(from {})".format(sess.identifier))
         self.print(repr(sess), indent=2)
 

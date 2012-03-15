@@ -22,6 +22,8 @@ class Firefox(common.Browser):
         else:
             return os.path.join(self.profiles_dir ,dirs[0], "cookies.sqlite")
         
+    def _create_specific_cookie(self, cookie):
+        return FirefoxCookie.from_common(cookie.to_common())
 
 class FirefoxFactory(common.BrowserFactory):
     def windows(self):
@@ -49,13 +51,27 @@ class FirefoxMac(Firefox):
 class FirefoxCookie(dokonico.core.Cookie):
     def __init__(self, dic, browser):
         self.browser_name = browser.name
-        self.dic = dic
+        dokonico.core.Cookie.__init__(self, dic)
         
     @property
     def last_access_ticks(self):
-        return int(self.creation_utc) / 1000000
+        return int(self.last_access_utc) / 1000000
 
     @property
     def expire_ticks(self):
         return int(self.expire_utc)
 
+    def to_common(self):
+        ret = self.dic.copy()
+        ret["creation_utc"] /= 1000000
+        ret["expires_utc"] /= 1000000
+        ret["last_access_utc"] /= 1000000
+        return ret
+
+    @staticmethod
+    def from_common(dic):
+        dic["creation_utc"] *= 1000000
+        dic["expires_utc"] *= 1000000
+        dic["last_access_utc"] *= 1000000
+        return ChromeCookie(dic, Chrome.name)
+        

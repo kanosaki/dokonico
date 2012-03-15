@@ -1,4 +1,6 @@
 
+import sqlite3
+
 import dokonico.browser.sqlite_adapter
 
 
@@ -8,6 +10,16 @@ class SessionNotFoundError(Exception):
 class Browser:
     def __init__(self):
         raise Exception("dokonico.browser.common.Browser is Abstract class")
+
+    def push(self, cookie):
+        if cookie.browser_name == self.name:
+            return
+        s_cookie = self._create_specific_cookie(cookie)
+        print(s_cookie.dic)
+        try:
+            self.adapter.update(s_cookie.dic)
+        except sqlite3.Error:
+            self.adapter.insert(s_cookie.dic)
 
     @property
     def adapter(self):
@@ -24,7 +36,6 @@ class Browser:
             return sessions[0]
         except (IndexError, SessionNotFoundError):
             return None
-
 
 class BrowserFactory:
     def __init__(self, env):

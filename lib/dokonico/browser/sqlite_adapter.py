@@ -42,7 +42,8 @@ class SQLiteAdapter:
                 self.execute_sql(sql)))
 
     def update(self, dic):
-        pass
+        sql = self.query_builder.update(dic)
+        print(sql)
 
     @cached_property
     def query_builder(self):
@@ -119,10 +120,14 @@ class QueryBuilder:
         ret = []
         for header in self.names.column_headers:
             cname = self.names.common_name(header)
-            value = dic[cname]
+            try:
+                value = dic[cname] 
+            except KeyError:
+                value = self.names.default_value(cname)
             expr = "{0}={1}".format(header, self.expr_by_type(cname, value))
             ret.append(expr)
         return ",".join(ret)
+    
 
     def create_dict(self, values):
         return dict(zip(self.names.common_names, values))
@@ -169,6 +174,9 @@ class NameTableFactory:
 class NameTable:
     def initialize(self):
         self.data = self.whole[self.name]
+
+    def default_value(self, cname):
+        return self.whole["default_values"][cname]
 
     def common_name(self, sname):
         """Converts browser specific column name to common column name."""

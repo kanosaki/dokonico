@@ -1,6 +1,8 @@
 
 import datetime
 import json
+import socket
+import os
 
 def config_item(loc):
     def wrap(f):
@@ -39,6 +41,7 @@ class Config:
 class Cookie:
     def __init__(self, dic):
         self.dic = dic
+        self.set_identifier()
 
     def __getstate__(self):
         return self.__dict__.copy()
@@ -52,21 +55,34 @@ class Cookie:
         else:
             raise AttributeError()
 
-    def is_newer_than(self, cookie):
-        this_created = self.time_comparator
-        that_created = cookie.time_comparator
-        return this_created > that_created
+    def __lt__(self, other):
+        return self.last_access_ticks < other.last_access_ticks
+
+    def __eq__(self, other):
+        return self.last_access_ticks == other.last_access_ticks
+
+    def set_identifier(self):
+        i = "{}[{}@{}]".format(self.browser_name, os.getlogin(), socket.gethostname())
+        self.identifier = i
+
+    def is_newer_than(self, that):
+        return self > that
 
     @property
     def last_access_ticks(self):
         return int(self.last_access_utc)
 
     def __repr__(self):
-        return """Found! [Last accessed {}, Expires {}]""".format(
-                self._repr_utc_time(self.last_access_ticks),
-                self._repr_utc_time(self.expires_utc))
+        com_cookie = self.to_common()
+        return """Session [Last accessed {}, Expires {}]""".format(
+                self._repr_utc_time(com_cookie["last_access_utc"]),
+                self._repr_utc_time(com_cookie["expires_utc"]))
 
     def _repr_utc_time(self, time):
         t = datetime.datetime.utcfromtimestamp(time)
         return t.strftime("%Y/%m/%d(%a) %H:%M:%S")
+    
+    def to_common(self):
+        return self.dic
+        
 
