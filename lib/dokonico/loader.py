@@ -16,9 +16,12 @@ class ArgParser:
 
     def init_parser(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("--verbose", action="store_true")
+        parser.add_argument("--verbose", action="store_true",
+                help="Prints more information. It will be disabled when --debug is specified.")
+        parser.add_argument("--debug", action="store_true",
+                help="Prints information for debugging.")
         parser.add_argument("--config", type=str, default=DEFAULT_CONF_PATH,
-                metavar="filepath")
+                metavar="filepath", help="A path to config file.")
         subparsers = parser.add_subparsers(help="commands",dest="mode")
 
         self.init_sync_parser(subparsers)
@@ -27,7 +30,10 @@ class ArgParser:
 
     def init_sync_parser(self, subpersers):
         sync_parser = subpersers.add_parser("sync", help="Execute sync")
-        sync_parser.add_argument("-l", "--local", action="store_true")
+        sync_parser.add_argument("-l", "--local", action="store_true", 
+                help="Sync between local browsers")
+        sync_parser.add_argument("-s", "--show", action="store_true",
+                help="Also executes the 'show' commands")
 
     def init_show_parser(self, subparsers):
         show_parser = subparsers.add_parser("show", help="Show sessions.")
@@ -37,11 +43,8 @@ class ArgParser:
 
 
 class AppLoader:
-    def __init__(self, conf="etc/config.json"):
-        self.conf_path = conf
-
     def config(self):
-        path = os.path.join(APP_ROOT, self.conf_path)
+        path = os.path.join(APP_ROOT, self.opts.config)
         return dokonico.core.Config(path)
 
     def env(self):
@@ -53,12 +56,19 @@ class AppLoader:
         return parser.parse()
 
     def init_logger(self):
-        log.basicConfig(level=log.DEBUG,
+        if self.opts.debug:
+            lvl = log.DEBUG
+        elif self.opts.verbose:
+            lvl = log.INFO
+        else:
+            lvl = log.WARN
+        log.basicConfig(level=lvl,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%Y/%m/%d %H:%M:%S')
         log.debug("Logger initialized.")
 
-    def create_app(self, opts):
+    def create_app(self):
+        opts = self.opts
         if opts.mode == "show":
             return dokonico.app.SessionsPrinter(self.config(), self.env(), opts)
         elif opts.mode == "sync":
@@ -68,7 +78,7 @@ class AppLoader:
         
 
     def load(self):
+        self.opts = self.argoptions()
         self.init_logger()
-        opts = self.argoptions()
-        return self.create_app(opts)
+        return self.create_app()
 
