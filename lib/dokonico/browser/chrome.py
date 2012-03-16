@@ -1,6 +1,7 @@
 
 import os
 import sqlite3
+import time
 
 import dokonico
 import dokonico.core
@@ -47,30 +48,28 @@ class ChromeCookie(dokonico.core.Cookie):
 
     @property
     def last_access_ticks(self):
-        return int(self.last_access_utc) / 1000000
+        return self._convert_timestamp(self.last_access_utc)
 
-    @property
-    def expire_ticks(self):
-        return int(self.expire_utc) / 1000000
+    @staticmethod
+    def _convert_timestamp(val):
+        return (int(val)) - 11644473600000000
 
-    def _convert_timestamp(self, val):
-        return (val / 1000000) - 11644473600
-
-    def _convert_back_timestamp(self, val):
-        return (val + 11644473600) * 1000000
+    @staticmethod
+    def _convert_back_timestamp(val):
+        return (val + 11644473600000000) 
         
     def to_common(self):
         ret = self.dic.copy()
-        ret["creation_utc"] = self._convert_timestamp(ret["creation_utc"])
-        ret["expires_utc"] = self._convert_timestamp(ret["expires_utc"])
-        ret["last_access_utc"] = self._convert_timestamp(ret["last_access_utc"])
+        ret["creation_utc"] = ChromeCookie._convert_timestamp(ret["creation_utc"])
+        ret["expires_utc"] =  ChromeCookie._convert_timestamp(ret["expires_utc"])
+        ret["last_access_utc"] = ChromeCookie._convert_timestamp(ret["last_access_utc"])
         return ret
 
     @staticmethod
     def from_common(dic):
         d = dic.copy()
-        d["creation_utc"] = self._convert_back_timestamp(d["creation_utc"])
-        d["expires_utc"] = self._convert_back_timestamp(d["expires_utc"])
-        d["last_access_utc"] = self._convert_back_timestamp(d["last_access_utc"])
-        return ChromeCookie(dic, Chrome.name)
+        d["creation_utc"] =  ChromeCookie._convert_back_timestamp(d["creation_utc"])
+        d["expires_utc"] =  ChromeCookie._convert_back_timestamp(d["expires_utc"])
+        d["last_access_utc"] =  ChromeCookie._convert_back_timestamp(d["last_access_utc"])
+        return ChromeCookie(d, Chrome.name)
         

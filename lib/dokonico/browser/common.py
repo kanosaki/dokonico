@@ -1,7 +1,9 @@
 
 import sqlite3
+import logging as log
 
 import dokonico.browser.sqlite_adapter
+
 
 
 class SessionNotFoundError(Exception):
@@ -14,11 +16,11 @@ class Browser:
     def push(self, cookie):
         if cookie.browser_name == self.name:
             return
-        s_cookie = self._create_specific_cookie(cookie)
-        print(s_cookie.dic)
         try:
+            s_cookie = self._create_specific_cookie(cookie)
             self.adapter.update(s_cookie.dic)
-        except sqlite3.Error:
+        except (sqlite3.Error, Exception) as e:
+            log.warn(e)
             self.adapter.insert(s_cookie.dic)
 
     @property

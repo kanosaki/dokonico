@@ -10,7 +10,7 @@ class Firefox(common.Browser):
     def query_session(self):
         with self.adapter as a:
             sessions = a.query()
-            return [ FirefoxCookie(s, self) for s in sessions ]
+            return [ FirefoxCookie(s, self.name) for s in sessions ]
 
     @property
     def cookie_db_file(self):
@@ -21,9 +21,20 @@ class Firefox(common.Browser):
             raise Exception("There are plural default profile directories in Firefox.")
         else:
             return os.path.join(self.profiles_dir ,dirs[0], "cookies.sqlite")
+
+    def _set_id(self, dic):
+        prev_session = self.query_session()
+        if len(prev_session) == 1:
+            prev_id = prev_session[0].id
+            dic["id"] = prev_id
+        else:
+            raise Exception("Unable to fetch id")
         
     def _create_specific_cookie(self, cookie):
-        return FirefoxCookie.from_common(cookie.to_common())
+        dic = cookie.to_common()
+        if "id" not in dic:
+            self._set_id(dic)
+        return FirefoxCookie.from_common(dic)
 
 class FirefoxFactory(common.BrowserFactory):
     def windows(self):
@@ -50,28 +61,20 @@ class FirefoxMac(Firefox):
 
 class FirefoxCookie(dokonico.core.Cookie):
     def __init__(self, dic, browser):
-        self.browser_name = browser.name
+        self.browser_name = browser
         dokonico.core.Cookie.__init__(self, dic)
         
     @property
     def last_access_ticks(self):
-        return int(self.last_access_utc) / 1000000
-
-    @property
-    def expire_ticks(self):
-        return int(self.expire_utc)
+        return int(self.last_access_utc) 
 
     def to_common(self):
         ret = self.dic.copy()
-        ret["creation_utc"] /= 1000000
-        ret["expires_utc"] /= 1000000
-        ret["last_access_utc"] /= 1000000
+        ret["expires_utc"] *= 1000000
         return ret
 
     @staticmethod
     def from_common(dic):
-        dic["creation_utc"] *= 1000000
-        dic["expires_utc"] *= 1000000
-        dic["last_access_utc"] *= 1000000
-        return ChromeCookie(dic, Chrome.name)
+        dic["expires_utc"] /= 1000000
+        return FirefoxCookie(dic, Firefox.name)
         

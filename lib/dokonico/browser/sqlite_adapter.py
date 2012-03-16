@@ -45,6 +45,11 @@ class SQLiteAdapter:
         sql = self.query_builder.update(dic)
         print(sql)
 
+    def insert(self, dic):
+        sql = self.query_builder.insert(dic)
+        print(sql)
+        
+
     @cached_property
     def query_builder(self):
         factory = QueryBuilderFactory(self)

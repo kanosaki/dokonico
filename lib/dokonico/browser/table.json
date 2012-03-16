@@ -18,7 +18,8 @@
     },
     "default_values" :{
         "has_expires" : "1",
-        "persistent" : "1"
+        "persistent" : "1",
+        "base_domain" : "nicovideo.jp"
     },
     "Chrome" : { 
         "table_name" : "cookies",

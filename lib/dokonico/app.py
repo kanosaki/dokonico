@@ -85,6 +85,9 @@ class SessionsPrinter(App):
         remote = self.remotes.current
         self.print(remote.name + ": ", indent=1, end="")
         sess = remote.pull()
-        print("(from {})".format(sess.identifier))
+        if sess is not None:
+            self.print("(from {})".format(sess.identifier))
+        else:
+            self.print()
         self.print(repr(sess), indent=2)
 

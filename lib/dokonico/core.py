@@ -38,6 +38,8 @@ class Config:
     def custom_server(self):
         return self.dic["custom_server"]
 
+JST_DELTA = datetime.timedelta(hours=9)
+
 class Cookie:
     def __init__(self, dic):
         self.dic = dic
@@ -68,10 +70,6 @@ class Cookie:
     def is_newer_than(self, that):
         return self > that
 
-    @property
-    def last_access_ticks(self):
-        return int(self.last_access_utc)
-
     def __repr__(self):
         com_cookie = self.to_common()
         return """Session [Last accessed {}, Expires {}]""".format(
@@ -79,8 +77,8 @@ class Cookie:
                 self._repr_utc_time(com_cookie["expires_utc"]))
 
     def _repr_utc_time(self, time):
-        t = datetime.datetime.utcfromtimestamp(time)
-        return t.strftime("%Y/%m/%d(%a) %H:%M:%S")
+        t = datetime.datetime.utcfromtimestamp(time / 1000000)
+        return (t + JST_DELTA).strftime("%Y/%m/%d(%a) %H:%M:%S")
     
     def to_common(self):
         return self.dic
