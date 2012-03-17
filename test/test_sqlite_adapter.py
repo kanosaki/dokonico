@@ -1,6 +1,7 @@
 
 import os
 import warnings
+import shutil
 
 from nose.tools import *
 import nose.tools
@@ -8,28 +9,6 @@ import nose.tools
 import dokonico.browser.sqlite_adapter as sqa
 
 THIS_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
-
-class TestSQLiteAdapter:
-    def sample_db(self):
-        return os.path.join(THIS_DIR_PATH, "./private/cookies.sqlite")
-
-    def test_lookup(self):
-        db_file = self.sample_db()
-        if os.path.exists(db_file):
-            self.exec_lookup(db_file)
-        else:
-            warnings.warn("Sample database not found, skipping.")
-
-
-    def exec_lookup(self, path):
-        ret = None
-        with sqa.SQLiteAdapter(path, "Firefox") as a:
-            ret = a.query()
-        assert_equals(len(ret), 1)
-        row = ret[0]
-        assert_equals(row['host_key'], '.nicovideo.jp')
-        assert_equals(row['name'], 'user_session')
-        assert_equals(row['path'], '/')
 
 qb_factory = sqa.QueryBuilderFactory(None)
 CHROME_SAMPLE_DIC = { 
@@ -44,6 +23,81 @@ CHROME_SAMPLE_DIC = {
         "last_access_utc" : "123456",
         "has_expires" : "1",
         "persistent" : "1"}
+
+FIREFOX_SAMPLE_DIC = {
+        "id" : 451,
+        "base_domain" : "nicovideo.jp",
+        "name" : "user_session",
+        "value" : "homuhomu",
+        "host_key" : ".nicovideo.jp",
+        "path" : "/",
+        "expires_utc" : "1333643758",
+        "last_access_utc" : "1331055863395830", 
+        "creation_utc" : "1331051758414005",
+        "is_secure" : 0,
+        "is_http_only" : 0}
+
+class TestSQLiteAdapter:
+    def sample_db(self):
+        return os.path.join(THIS_DIR_PATH, "./private/cookies.sqlite")
+
+    def sample_db_bak(self):
+        return os.path.join(THIS_DIR_PATH, "./private/cookies.sqlite.bak")
+
+    def restore_db(self):
+        shutil.copy(self.sample_db_bak(), self.sample_db())
+
+    def teardown(self):
+        self.restore_db()
+
+    def test_lookup(self):
+        db_file = self.sample_db()
+        if os.path.exists(db_file):
+            self.exec_lookup(db_file)
+        else:
+            warnings.warn("Sample database not found, skipping.")
+
+    def exec_lookup(self, path):
+        ret = None
+        with sqa.SQLiteAdapter(path, "Firefox") as a:
+            ret = a.query()
+        assert_equals(len(ret), 1)
+        row = ret[0]
+        assert_equals(row['host_key'], '.nicovideo.jp')
+        assert_equals(row['name'], 'user_session')
+        assert_equals(row['path'], '/')
+
+    def exec_update(self, db_path):
+        with sqa.SQLiteAdapter(db_path, "Firefox") as a:
+            before = a.query()[0]
+            assert_equals(1331051758414705, before['creation_utc'])
+            assert_equals('nicovideo.jp', before['base_domain'])
+            assert_equals('.nicovideo.jp', before['host_key'])
+            assert_equals('user_session_1138394_2371933031318410806', before['value'])
+            a.update(FIREFOX_SAMPLE_DIC)
+            after = a.query()[0]
+            assert_equals(1331051758414005, after['creation_utc'])
+            assert_equals('nicovideo.jp', after['base_domain'])
+            assert_equals('.nicovideo.jp', after['host_key'])
+            assert_equals('homuhomu', after['value'])
+
+    def test_update(self):
+        db_file = self.sample_db()
+        if os.path.exists(db_file):
+            self.exec_update(db_file)
+        else:
+            warnings.warn("Sample database not found, skipping.")
+
+    def test_insert(self):
+        db_file = self.sample_db()
+        if os.path.exists(db_file):
+            self.exec_update(db_file)
+        else:
+            warnings.warn("Sample database not found, skipping.")
+
+    def test_insert(self):
+        pass
+
 
 class TestQueryBuilder:
     def test_select(self):

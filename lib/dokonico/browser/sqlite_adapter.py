@@ -2,6 +2,7 @@
 import sqlite3
 import os
 import json
+import logging as log
 
 def cached_property(f):
     """returns a cached property that is calculated by function f"""
@@ -38,17 +39,19 @@ class SQLiteAdapter:
 
     def query(self):
         sql = self.query_builder.select()
+        log.info("SELECT Query to {}: {}".format(self.browser_name, sql))
         return list(map(self.query_builder.create_dict,
                 self.execute_sql(sql)))
 
     def update(self, dic):
         sql = self.query_builder.update(dic)
-        print(sql)
+        log.info("UPDATE Query to {}: {}".format(self.browser_name, sql))
+        self.execute_sql(sql)
 
     def insert(self, dic):
         sql = self.query_builder.insert(dic)
-        print(sql)
-        
+        log.info("INSERT Query to {}: {}".format(self.browser_name, sql))
+        self.execute_sql(sql)
 
     @cached_property
     def query_builder(self):

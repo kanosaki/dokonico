@@ -22,6 +22,7 @@ class Dropbox(common.Remote):
             return False
         
     def push(self, cookie):
+        log.info("Pushing to Dropbox..")
         path = self.conf.session_file_path
         if not self._check_dirs(path):
             raise IOError("Dropbox sync dir not found. {}".format(os.path.dirname(path)))
@@ -29,6 +30,7 @@ class Dropbox(common.Remote):
             pickle.dump(cookie, f)
 
     def pull(self):
+        log.info("Pulling from Dropbox.")
         path = self.conf.session_file_path
         if not os.path.exists(path):
             return None
@@ -52,8 +54,6 @@ class DropboxConfig:
     @config_item("/dropbox/auto_dir_create")
     def auto_dir_create(self):
         return self.conf.get("auto_dir_create") or True
-        
-        
 
     @property
     def session_file_name(self):
@@ -63,7 +63,4 @@ class DropboxConfig:
     def session_file_path(self):
         return os.path.join(self.target_dir, self.session_file_name)
 
-        
-        
-        
         

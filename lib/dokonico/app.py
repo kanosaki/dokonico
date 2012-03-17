@@ -48,9 +48,11 @@ class Syncer(App):
         local_latest = self._local_latest()
         remote_latest = self._pull_remote()
         if remote_latest is None or local_latest.is_newer_than(remote_latest):
+            log.info("Syncing (Local -> Remote)".format(local_latest.browser_name)) 
             self._push_remote(local_latest)
             self.browsers.push_all(local_latest)
         else:
+            log.info("Syncing (Remote -> Local)")
             self.browsers.push_all(remote_latest)
 
 
