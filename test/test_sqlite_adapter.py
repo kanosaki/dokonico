@@ -25,7 +25,7 @@ CHROME_SAMPLE_DIC = {
         "persistent" : "1"}
 
 FIREFOX_SAMPLE_DIC = {
-        "id" : 451,
+        "id" : "451",
         "base_domain" : "nicovideo.jp",
         "name" : "user_session",
         "value" : "homuhomu",
@@ -33,9 +33,9 @@ FIREFOX_SAMPLE_DIC = {
         "path" : "/",
         "expires_utc" : "1333643758",
         "last_access_utc" : "1331055863395830", 
-        "creation_utc" : "1331051758414005",
-        "is_secure" : 0,
-        "is_http_only" : 0}
+        "creation_utc" : "1331051758333005",
+        "is_secure" : "0",
+        "is_http_only" : "0"}
 
 class TestSQLiteAdapter:
     def sample_db(self):
@@ -76,7 +76,7 @@ class TestSQLiteAdapter:
             assert_equals('user_session_1138394_2371933031318410806', before['value'])
             a.update(FIREFOX_SAMPLE_DIC)
             after = a.query()[0]
-            assert_equals(1331051758414005, after['creation_utc'])
+            assert_equals(1331051758333005, after['creation_utc'])
             assert_equals('nicovideo.jp', after['base_domain'])
             assert_equals('.nicovideo.jp', after['host_key'])
             assert_equals('homuhomu', after['value'])
@@ -111,6 +111,17 @@ class TestQueryBuilder:
         sql = qb.insert(CHROME_SAMPLE_DIC)
         expected = "INSERT INTO cookies VALUES(12345,'.example.com','foobar','homuhomu','/',6789,0,0,123456,1,1)"
         assert_equals(sql, expected)
+
+    def sample_db(self):
+        return os.path.join(THIS_DIR_PATH, "./private/cookies.sqlite")
+
+    def test_insert_firefox(self):
+        with sqa.SQLiteAdapter(self.sample_db(), "Firefox") as adapter:
+            qb_factory = sqa.QueryBuilderFactory(adapter)
+            qb = qb_factory.create("Firefox")
+            sql = qb.insert(FIREFOX_SAMPLE_DIC)
+            expected = "INSERT INTO moz_cookies VALUES(849,'nicovideo.jp','user_session','homuhomu','.nicovideo.jp','/',1333643758,1331055863395830,1331051758333005,0,0)"
+            assert_equals(expected, sql)
 
     def test_update(self):
         qb = qb_factory.create("Chrome")
