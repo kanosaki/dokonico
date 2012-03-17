@@ -16,21 +16,17 @@ class Browser:
     def push(self, cookie):
         if cookie.browser_name == self.name:
             return
-        try:
-            s_cookie = self._create_specific_cookie(cookie)
-            self.adapter.update(s_cookie.dic)
-        except (sqlite3.Error, Exception) as e:
-            log.warn(e)
-            self.adapter.insert(s_cookie.dic)
+        with self.adapter as a:
+            try:
+                s_cookie = self._create_specific_cookie(cookie)
+                a.update(s_cookie.dic)
+            except (sqlite3.Error, Exception) as e:
+                log.warn(e)
+                a.insert(s_cookie.dic)
 
     @property
     def adapter(self):
-        try:
-            return self._adapter
-        except AttributeError:
-            path = self.cookie_db_file
-            self._adapter = dokonico.browser.sqlite_adapter.SQLiteAdapter(path, self.name)
-            return self._adapter
+        return dokonico.browser.sqlite_adapter.SQLiteAdapter(self.cookie_db_file, self.name)
 
     def session(self):
         sessions = self.query_session()
