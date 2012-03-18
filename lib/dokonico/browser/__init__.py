@@ -9,7 +9,7 @@ class BrowserManager:
             yield b
 
     def latest(self):
-        sessions_raw = map(lambda b : b.session(), self.browsers)
+        sessions_raw = map(lambda b : b.pull(), self.browsers)
         sessions = list(filter(lambda s : s is not None, sessions_raw))
         if len(sessions) == 0:
             return None

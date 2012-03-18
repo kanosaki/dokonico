@@ -80,7 +80,7 @@ class SessionsPrinter(App):
     def _show_browsers(self):
         for b in self.browsers:
             self.print(b.name + ":", indent=1)
-            sess = b.session()
+            sess = b.pull()
             self.print(repr(sess), indent=2)
 
     def _show_remote(self):

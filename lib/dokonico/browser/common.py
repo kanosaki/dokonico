@@ -13,7 +13,7 @@ class Browser:
         raise Exception("dokonico.browser.common.Browser is Abstract class")
 
     def push(self, cookie):
-        if cookie.identifier == self.session().identifier:
+        if cookie.identifier == self.pull().identifier:
             return
         with self.adapter as a:
             try:
@@ -27,7 +27,7 @@ class Browser:
     def adapter(self):
         return dokonico.browser.sqlite_adapter.SQLiteAdapter(self.cookie_db_file, self.name)
 
-    def session(self):
+    def pull(self):
         try:
             return self._session
         except AttributeError:

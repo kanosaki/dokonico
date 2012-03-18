@@ -36,7 +36,7 @@ class TestDropbox:
 
     def sample_cookie(self):
         ff = DummyFirefox()
-        return ff.session()
+        return ff.pull()
 
     def check_files(self):
         p = os.path

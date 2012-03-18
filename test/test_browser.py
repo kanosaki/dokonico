@@ -31,7 +31,7 @@ class TestBrowser:
 
     def _execute_session(self, path):
         browser = self.browser()
-        session = browser.session()
+        session = browser.pull()
         assert_equals(session.name, "user_session")
         assert_equals(session.host_key, ".nicovideo.jp")
 
