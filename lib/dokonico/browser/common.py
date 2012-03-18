@@ -35,6 +35,7 @@ class Browser:
             return self._session
 
     def _update_session(self):
+        log.debug("Updating session: {}".format(self.name))
         sessions = self.query_session()
         try:
             self._session = sessions[0]

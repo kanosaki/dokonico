@@ -42,19 +42,28 @@ class Syncer(App):
 
     def _push_remote(self, cookie):
         self.remotes.push(cookie)
+
+    @property
+    def targets(self):
+        for b in self.browsers:
+            yield b
+        yield self.remotes.current
+
+    def _fetch_sessions(self):
+        for t in self.targets:
+            yield (t.pull(), t)
         
     def start(self):
         log.info("Syncing started.")
-        local_latest = self._local_latest()
-        remote_latest = self._pull_remote()
-        if remote_latest is None or local_latest.is_newer_than(remote_latest):
-            log.info("Syncing (Local -> Remote)".format(local_latest.browser_name)) 
-            self._push_remote(local_latest)
-            self.browsers.push_all(local_latest)
-        else:
-            log.info("Syncing (Remote -> Local)")
-            self.browsers.push_all(remote_latest)
-
+        sess_tuples = list(self._fetch_sessions())
+        latest = max(sess_tuples, key=lambda t: t[0])
+        latest_cookie = latest[0]
+        latest_prov = latest[1]
+        for (cookie, prov) in sess_tuples:
+            if cookie is latest_cookie:
+                continue
+            log.debug("Pusing {} to {}".format(cookie, prov.name))
+            prov.push(latest_cookie)
 
 class SessionsPrinter(App):
     def __init__(self, conf, env, opts):

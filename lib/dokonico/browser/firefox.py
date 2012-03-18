@@ -23,9 +23,9 @@ class Firefox(common.Browser):
             return os.path.join(self.profiles_dir ,dirs[0], "cookies.sqlite")
 
     def _set_id(self, dic):
-        prev_session = self.query_session()
-        if len(prev_session) == 1:
-            prev_id = prev_session[0].id
+        prev_session = self.pull()
+        if prev_session is not None:
+            prev_id = prev_session.id
             dic["id"] = prev_id
         else:
             raise Exception("Unable to fetch id")
