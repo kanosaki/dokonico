@@ -30,6 +30,9 @@ class SQLiteAdapter:
     def close(self):
         self.connection.close()
 
+    def commit(self):
+        self.connection.commit()
+
     def execute_sql(self, sql):
         cursor = self.connection.cursor()
         cursor.execute(sql)
@@ -63,6 +66,8 @@ class SQLiteAdapter:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if exc_value is None:
+            self.commit()
         self.close()
 
 class QueryBuilderFactory:

@@ -5,7 +5,6 @@ import logging as log
 import dokonico.browser.sqlite_adapter
 
 
-
 class SessionNotFoundError(Exception):
     pass
 
@@ -14,7 +13,7 @@ class Browser:
         raise Exception("dokonico.browser.common.Browser is Abstract class")
 
     def push(self, cookie):
-        if cookie.browser_name == self.name:
+        if cookie.identifier == self.session().identifier:
             return
         with self.adapter as a:
             try:
@@ -29,11 +28,19 @@ class Browser:
         return dokonico.browser.sqlite_adapter.SQLiteAdapter(self.cookie_db_file, self.name)
 
     def session(self):
+        try:
+            return self._session
+        except AttributeError:
+            self._update_session()
+            return self._session
+
+    def _update_session(self):
         sessions = self.query_session()
         try:
-            return sessions[0]
+            self._session = sessions[0]
         except (IndexError, SessionNotFoundError):
-            return None
+            self._session = None
+        
 
 class BrowserFactory:
     def __init__(self, env):
@@ -46,5 +53,4 @@ class BrowserFactory:
             return self.mac()
         else:
             raise Exception("Sorry, OS '{0}' is not supported.".format(self.env.name))
-
         
