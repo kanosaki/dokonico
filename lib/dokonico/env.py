@@ -4,7 +4,7 @@ import platform
 import os
 
 class EnvHelperFactory:
-    def create(self):
+    def create():
         os_name = platform.system()
         if os_name == "Windows":
             return _WindowsEnvHelper()
@@ -66,3 +66,5 @@ class _LinuxEnvHelper(_UnixEnvHelper):
 
 class UnsupportedOSError(Exception):
     pass
+
+current = EnvHelperFactory.create()

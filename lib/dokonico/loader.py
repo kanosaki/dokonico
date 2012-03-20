@@ -48,8 +48,7 @@ class AppLoader:
         return dokonico.core.Config(path)
 
     def env(self):
-        factory = dokonico.env.EnvHelperFactory()
-        return factory.create()
+        return dokonico.env.current
 
     def argoptions(self):
         parser = ArgParser()
