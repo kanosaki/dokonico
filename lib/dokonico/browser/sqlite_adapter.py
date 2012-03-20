@@ -131,7 +131,7 @@ class QueryBuilder:
         if val_type == "str":
             return "'{0}'".format(value)
         elif val_type == "int":
-            return value
+            return str(value)
         else:
             raise Exception("Invalid column type: {0} at table definition".format(val_type))
 
@@ -167,7 +167,7 @@ class FirefoxQueryBuilder(QueryBuilder):
         return factory.create("Firefox")
 
     def insert_tuple_expr(self, dic):
-        dic["id"] = str(self.next_id())
+        dic["id"] = int(self.next_id())
         return ",".join(
                 [ self.value_expr(dic,h) for h in self.names.column_headers ])
 

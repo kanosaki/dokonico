@@ -12,30 +12,30 @@ THIS_DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 qb_factory = sqa.QueryBuilderFactory(None)
 CHROME_SAMPLE_DIC = { 
-        "creation_utc" : "12345",
+        "creation_utc" : 12345,
         "host_key" : ".example.com",
         "name" : "foobar",
         "value" : "homuhomu",
         "path" : "/",
-        "expires_utc" : "6789",
-        "is_secure" : "0",
-        "is_http_only" : "0",
-        "last_access_utc" : "123456",
-        "has_expires" : "1",
-        "persistent" : "1"}
+        "expires_utc" : 6789,
+        "is_secure" : 0,
+        "is_http_only" : 0,
+        "last_access_utc" : 123456,
+        "has_expires" : 1,
+        "persistent" : 1}
 
 FIREFOX_SAMPLE_DIC = {
-        "id" : "451",
+        "id" : 451,
         "base_domain" : "nicovideo.jp",
         "name" : "user_session",
         "value" : "homuhomu",
         "host_key" : ".nicovideo.jp",
         "path" : "/",
-        "expires_utc" : "1333643758",
-        "last_access_utc" : "1331055863395830", 
-        "creation_utc" : "1331051758333005",
-        "is_secure" : "0",
-        "is_http_only" : "0"}
+        "expires_utc" : 1333643758,
+        "last_access_utc" : 1331055863395830, 
+        "creation_utc" : 1331051758333005,
+        "is_secure" : 0,
+        "is_http_only" : 0}
 
 class TestSQLiteAdapter:
     def sample_db(self):
@@ -107,14 +107,20 @@ class TestSQLiteAdapter:
     def test_insert(self):
         db_file = self.sample_db()
         if os.path.exists(db_file):
-            pass
-            #self.exec_update(db_file)
+            self.exec_insert(db_file)
         else:
             warnings.warn("Sample database not found, skipping.")
 
-    def test_insert(self):
-        pass
-
+    def exec_insert(self, db_path):
+        with sqa.SQLiteAdapter(db_path, "Firefox") as a:
+            target = a.query()[0]
+            a.delete(target)
+            a.insert(target)
+            after = a.query()[0]
+            assert_equals(after["id"], 849)
+            after.pop('id')
+            target.pop('id')
+            assert_equals(target, after)
 
 class TestQueryBuilder:
     def test_select(self):
