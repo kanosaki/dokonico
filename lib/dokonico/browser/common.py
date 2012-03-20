@@ -12,17 +12,24 @@ class Browser:
     def __init__(self):
         raise Exception("dokonico.browser.common.Browser is Abstract class")
 
+    def needs_push(self, cookie):
+        prev_session = self.pull()
+        return prev_session is None or \
+            cookie.identifier != prev_session.identifier
+
     def push(self, cookie, force=False):
-        if cookie.identifier == self.pull().identifier and not force:
+        if not (force or self.needs_push()):
+            log.debug("Skipping pushing")
             return
-        del self._session # remove cache
+        log.debug("Pushing {} to {}".format(cookie, self.name))
+        prev_session = self.pull()
         with self.adapter as a:
-            try:
-                s_cookie = self._create_specific_cookie(cookie)
-                a.update(s_cookie.dic)
-            except (sqlite3.Error, Exception) as e:
-                log.warn(e)
+            s_cookie = self._create_specific_cookie(cookie)
+            if prev_session is None:
                 a.insert(s_cookie.dic)
+            else:
+                a.update(s_cookie.dic)
+        del self._session # remove cache
 
     @property
     def adapter(self):

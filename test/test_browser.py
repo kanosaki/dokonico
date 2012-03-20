@@ -115,9 +115,17 @@ class TestBrowserEx:
             return self._browser
 
     def sample_cookie_firefox(self):
-        return ff.FirefoxCookie(FIREFOX_SAMPLE_DIC)
+        return ff.FirefoxCookie(FIREFOX_SAMPLE_DIC, "Firefox")
     
-        
+    def test_push(self):
+        browser = self.browser()
+        prev = browser.pull()
+        ok_(prev is None)
+        cookie = self.sample_cookie_firefox()
+        browser.push(cookie, force=True)
+        after = browser.pull()
+        ok_(after is not None)
+        assert_equals(after.value, "homuhomu")
         
     def test_pull_fail(self):
         browser = self.browser()
