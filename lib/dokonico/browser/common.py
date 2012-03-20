@@ -12,9 +12,10 @@ class Browser:
     def __init__(self):
         raise Exception("dokonico.browser.common.Browser is Abstract class")
 
-    def push(self, cookie):
-        if cookie.identifier == self.pull().identifier:
+    def push(self, cookie, force=False):
+        if cookie.identifier == self.pull().identifier and not force:
             return
+        del self._session # remove cache
         with self.adapter as a:
             try:
                 s_cookie = self._create_specific_cookie(cookie)
