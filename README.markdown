@@ -23,6 +23,9 @@ I'm sorry, but this application (and documentation) will support only Japanese.
 
 ### サポートする(つもりの)共有方法
 * Dropbox経由
-* Google Docs経由(たぶんしない)
-* 自鯖(たぶんしない)
+
+#### 一瞬思いついた共有方法(実装予定無し)
+
+* Google Docs経由
+* 自鯖
 
