@@ -56,6 +56,12 @@ class SQLiteAdapter:
         log.info("INSERT Query to {}: {}".format(self.browser_name, sql))
         self.execute_sql(sql)
 
+    def delete(self, dic):
+        sql = self.query_builder.delete(dic)
+        log.info("DELETE Query to {}: {}".format(self.browser_name, sql))
+        self.execute_sql(sql)
+        
+
     @cached_property
     def query_builder(self):
         factory = QueryBuilderFactory(self)

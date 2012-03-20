@@ -81,6 +81,22 @@ class TestSQLiteAdapter:
             assert_equals('.nicovideo.jp', after['host_key'])
             assert_equals('homuhomu', after['value'])
 
+    def test_delete(self):
+        db_file = self.sample_db()
+        if os.path.exists(db_file):
+            self.exec_delete(db_file)
+        else:
+            warnings.warn("Sample database not found, skipping.")
+        
+    def exec_delete(self, db_path):
+        with sqa.SQLiteAdapter(db_path, "Firefox") as a:
+            before = a.query()
+            assert_equals(len(before), 1)
+            a.delete(before[0])
+            after = a.query()
+            assert_equals(len(after), 0)
+
+
     def test_update(self):
         db_file = self.sample_db()
         if os.path.exists(db_file):
