@@ -175,9 +175,9 @@ class FirefoxQueryBuilder(QueryBuilder):
         return a.execute_sql(sql)[0][0] + 1
 
 class NameTableFactory:
-    def __init__(self):
+    def __init__(self, name_table_path = "./table.json"):
         p = os.path
-        self.path = p.abspath(p.join(p.dirname(__file__), "./table.json")) 
+        self.path = p.abspath(p.join(p.dirname(__file__), name_table_path)) 
         self.load()
 
     def load(self):
