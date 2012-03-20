@@ -18,7 +18,7 @@ class Browser:
             cookie.identifier != prev_session.identifier
 
     def push(self, cookie, force=False):
-        if not (force or self.needs_push()):
+        if not (force or self.needs_push(cookie)):
             log.debug("Skipping pushing")
             return
         log.debug("Pushing {} to {}".format(cookie, self.name))
