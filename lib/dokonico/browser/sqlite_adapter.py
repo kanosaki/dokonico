@@ -149,6 +149,10 @@ class ChromeQueryBuilder(QueryBuilder):
     def create_name_table(self):
         factory = NameTableFactory()
         return factory.create("Chrome")
+    
+    def delete(self, dic):
+        return "DELETE FROM cookies WHERE host_key='{}' and name='{}'".format(
+                dic['host_key'], dic['name'])
         
 
 class FirefoxQueryBuilder(QueryBuilder):
@@ -160,6 +164,10 @@ class FirefoxQueryBuilder(QueryBuilder):
         dic["id"] = str(self.next_id())
         return ",".join(
                 [ self.value_expr(dic,h) for h in self.names.column_headers ])
+
+    def delete(self, dic):
+        ent_id = dic['id']
+        return "DELETE FROM moz_cookies WHERE id={}".format(ent_id)
     
     def next_id(self):
         a = self.adapter

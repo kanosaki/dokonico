@@ -124,6 +124,18 @@ class TestQueryBuilder:
             expected = "INSERT INTO moz_cookies VALUES(849,'nicovideo.jp','user_session','homuhomu','.nicovideo.jp','/',1333643758,1331055863395830,1331051758333005,0,0)"
             assert_equals(expected, sql)
 
+    def test_delete_firefox(self):
+        qb = qb_factory.create("Firefox")
+        sql = qb.delete(FIREFOX_SAMPLE_DIC)
+        expected = "DELETE FROM moz_cookies WHERE id=451"
+        assert_equals(expected, sql)
+
+    def test_delete_chrome(self):
+        qb = qb_factory.create("Chrome")
+        sql = qb.delete(CHROME_SAMPLE_DIC)
+        expected = "DELETE FROM cookies WHERE host_key='.example.com' and name='foobar'"
+        assert_equals(expected, sql)
+
     def test_update(self):
         qb = qb_factory.create("Chrome")
         sql = qb.update(CHROME_SAMPLE_DIC)
