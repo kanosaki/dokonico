@@ -1,6 +1,7 @@
 
 import sqlite3
-import logging as log
+import logging
+log = logging.getLogger("browser.common")
 
 import dokonico.browser.sqlite_adapter
 

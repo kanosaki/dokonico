@@ -2,7 +2,9 @@
 import sqlite3
 import os
 import json
-import logging as log
+import logging
+
+log = logging.getLogger("browser.sqlite_adapter")
 
 def cached_property(f):
     """returns a cached property that is calculated by function f"""
@@ -68,11 +70,17 @@ class SQLiteAdapter:
         return factory.create(self.browser_name)
     
     def __enter__(self):
+        log.debug("Connecting SQLite database[MODE:{}, PATH:{}]".format(
+            self.browser_name, self.path))
         self.connect()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        log.debug("Disconnecting SQLite database[MODE:{}, PATH:{}]".format(
+            self.browser_name, self.path))
         if exc_value is None:
+            log.debug("Commiting changes to SQLite database[MODE:{}, PATH:{}]".format(
+                self.browser_name, self.path))
             self.commit()
         self.close()
 

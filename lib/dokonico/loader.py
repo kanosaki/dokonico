@@ -1,6 +1,7 @@
 
 import os
-import logging as log
+import logging
+log = logging.getLogger("loader")
 import argparse
 
 APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
@@ -56,12 +57,12 @@ class AppLoader:
 
     def init_logger(self):
         if self.opts.debug:
-            lvl = log.DEBUG
+            lvl = logging.DEBUG
         elif self.opts.verbose:
-            lvl = log.INFO
+            lvl = logging.INFO
         else:
-            lvl = log.WARN
-        log.basicConfig(level=lvl,
+            lvl = logging.WARN
+        logging.basicConfig(level=lvl,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%Y/%m/%d %H:%M:%S')
         log.debug("Logger initialized.")

@@ -1,7 +1,8 @@
 
 import os
 import pickle
-import logging as log
+import logging
+log = logging.getLogger("remote.dropbox")
 
 from dokonico.core import config_item
 from dokonico.remote import common

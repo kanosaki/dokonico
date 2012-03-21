@@ -1,6 +1,7 @@
 
 import sys
-import logging as log
+import logging
+log = logging.getLogger("app")
 
 import dokonico.browser
 import dokonico.remote
