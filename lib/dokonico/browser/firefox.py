@@ -68,6 +68,10 @@ class FirefoxCookie(dokonico.core.Cookie):
     def last_access_ticks(self):
         return int(self.last_access_utc) 
 
+    @property
+    def creation_ticks(self):
+        return int(self.creation_utc)
+
     def to_common(self):
         ret = self.dic.copy()
         ret["expires_utc"] *= 1000000

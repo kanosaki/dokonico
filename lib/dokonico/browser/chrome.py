@@ -50,6 +50,10 @@ class ChromeCookie(dokonico.core.Cookie):
     def last_access_ticks(self):
         return self._convert_timestamp(self.last_access_utc)
 
+    @property
+    def creation_ticks(self):
+        return self._convert_timestamp(self.creation_utc)
+
     @staticmethod
     def _convert_timestamp(val):
         return (int(val)) - 11644473600000000

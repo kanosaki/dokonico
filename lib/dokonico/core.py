@@ -58,10 +58,10 @@ class Cookie:
             raise AttributeError()
 
     def __lt__(self, other):
-        return self.last_access_ticks < other.last_access_ticks
+        return self.creation_ticks < other.creation_ticks
 
     def __eq__(self, other):
-        return self.last_access_ticks == other.last_access_ticks
+        return self.creation_ticks == other.creation_ticks
 
     def set_identifier(self):
         i = "{}[{}@{}]".format(self.browser_name, os.getlogin(), socket.gethostname())
@@ -72,9 +72,8 @@ class Cookie:
 
     def __repr__(self):
         com_cookie = self.to_common()
-        return """Session [Last accessed {}, Expires {}]""".format(
-                self._repr_utc_time(com_cookie["last_access_utc"]),
-                self._repr_utc_time(com_cookie["expires_utc"]))
+        return """Session [Created {}]""".format(
+                self._repr_utc_time(com_cookie["creation_utc"]))
 
     def _repr_utc_time(self, time):
         t = datetime.datetime.utcfromtimestamp(time / 1000000)
