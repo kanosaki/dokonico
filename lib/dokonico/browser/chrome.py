@@ -31,7 +31,7 @@ class ChromeWin(Chrome):
         
     @property
     def cookie_db_file(self):
-        return os.path.join(self.env.app_data, "Local\\Google\\Chrome\\User Data\\Default\\Cookies")
+        return os.path.join(self.env.homedir, "AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cookies")
 
 class ChromeMac(Chrome):
     def __init__(self, env):
