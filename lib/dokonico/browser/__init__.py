@@ -34,7 +34,7 @@ class BrowserManager:
         from dokonico.browser import firefox
         yield chrome.ChromeFactory(self.env)
         yield firefox.FirefoxFactory(self.env)
-        if self.env.is_windows:
-            from dokonico.browser import ie
-            yield ie.IEFactory(self.env)
+        #if self.env.is_windows:
+        #    from dokonico.browser import ie
+        #    yield ie.IEFactory(self.env)
 
