@@ -4,10 +4,10 @@ import os
 
 class ExecContext:
 	def sync(self):
-		os.system("python ./main.py sync")
+		os.system("python ./main.py --from-gui sync")
 		
 	def show(self):
-		os.system("python ./main.py show")
+		os.system("python ./main.py --from-gui show")
 	
 contex = ExecContext()
 
@@ -24,4 +24,5 @@ class Frame(tk.Frame):
 if __name__ == '__main__':
 	f = Frame()
 	f.pack()
-	f.mainloop()
+    f.mainloop()
+
