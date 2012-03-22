@@ -1,6 +1,6 @@
 README
 ======
-__作成中です。(This app is still in the making.)__
+ステータス: とりあえず動いた
 
 I'm sorry, but this application (and documentation) will support only Japanese.
 
