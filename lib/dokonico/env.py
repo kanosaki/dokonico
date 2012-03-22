@@ -3,19 +3,32 @@
 import platform
 import os
 
+current = None
+
+def init(opts):
+    global current
+    factory = EnvHelperFactory(opts)
+    current = factory.create()
+
 class EnvHelperFactory:
-    def create():
+    def __init__(self, opts):
+        self.opts = opts
+        
+    def create(self):
         os_name = platform.system()
         if os_name == "Windows":
-            return _WindowsEnvHelper()
+            return _WindowsEnvHelper(self.opts)
         elif os_name == "Darwin":
-            return _MacEnvHelper()
+            return _MacEnvHelper(self.opts)
         elif os_name == "Linux":
-            return _LinuxEnvHelper()
+            return _LinuxEnvHelper(self.opts)
         else:
             raise UnsupportedOSError()
 
 class EnvHelper:
+    def __init__(self, opts):
+        self.opts = opts
+        
     @property
     def is_windows(self):
         return False
@@ -31,6 +44,10 @@ class EnvHelper:
     @property
     def username(self):
         return os.getlogin()
+    
+    @property
+    def promt_at_end(self):
+        return self.is_windows and not self.opts.from_gui
 
 class _WindowsEnvHelper(EnvHelper):
     name = "Windows"
@@ -67,4 +84,3 @@ class _LinuxEnvHelper(_UnixEnvHelper):
 class UnsupportedOSError(Exception):
     pass
 
-current = EnvHelperFactory.create()

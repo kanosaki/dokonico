@@ -23,6 +23,8 @@ class ArgParser:
                 help="Prints information for debugging.")
         parser.add_argument("--config", type=str, default=DEFAULT_CONF_PATH,
                 metavar="filepath", help="A path to config file.")
+        parser.add_argument("--from-gui", action="store_true",
+                help="Internal use only.")
         subparsers = parser.add_subparsers(help="commands",dest="mode")
 
         self.init_sync_parser(subparsers)
@@ -79,6 +81,7 @@ class AppLoader:
 
     def load(self):
         self.opts = self.argoptions()
+        dokonico.env.init(self.opts)
         self.init_logger()
         return self.create_app()
 

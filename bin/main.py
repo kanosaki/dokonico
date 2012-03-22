@@ -15,6 +15,6 @@ import dokonico.env
 
 if __name__ == '__main__':
     dokonico.start()
-    if dokonico.env.current.is_windows:
+    if dokonico.env.current.promt_at_end:
         input("Press any key to exit.")
         
