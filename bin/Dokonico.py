@@ -2,12 +2,14 @@
 import tkinter as tk
 import os
 
+MAIN_SCRIPT = os.path.abspath(os.path.join(os.path.dirname(__file__), "main.py"))
+
 class ExecContext:
 	def sync(self):
-		os.system("python ./main.py --from-gui sync")
+		os.system("python {} --from-gui sync".format(MAIN_SCRIPT))
 		
 	def show(self):
-		os.system("python ./main.py --from-gui show")
+		os.system("python {} --from-gui show".format(MAIN_SCRIPT))
 	
 contex = ExecContext()
 
@@ -22,7 +24,7 @@ class Frame(tk.Frame):
 			btn.pack(side=tk.LEFT)
 
 if __name__ == '__main__':
-	f = Frame()
-	f.pack()
+    f = Frame()
+    f.pack()
     f.mainloop()
 
